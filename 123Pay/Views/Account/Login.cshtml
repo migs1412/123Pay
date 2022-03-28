@@ -1,0 +1,59 @@
+﻿@model LoginViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="~/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/fonts/font-awesome-4.7.0/css/font-awesome.css" rel="stylesheet" />
+    <link href="~/fonts/iconic/css/material-design-iconic-font.css" rel="stylesheet" />
+    <link href="~/css/util.css" rel="stylesheet" />
+    <link href="~/css/main.css" rel="stylesheet" />
+    <style>
+        div.a {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="limiter">
+        <div class="container-login100">
+            <div class="wrap-login100">
+                <form class="login100-form validate-form" method="post">
+                    <span class="login100-form-title p-b-48">
+                        123Pay
+                    </span>
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger">
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate="Enter Unsername">
+                        <input class="input100" asp-for="@Model.UserName">
+                        <span class="focus-input100" asp-for="@Model.UserName" data-placeholder="Username"></span>
+                    </div>
+
+                    <div class="wrap-input100 validate-input" data-validate="Enter Password">
+                        <span class="btn-show-pass">
+                            <i class="zmdi zmdi-eye"></i>
+                        </span>
+                        <input class="input100" asp-for="@Model.Password">
+                        <span class="focus-input100" asp-for="@Model.Password" data-placeholder="Password"></span>
+                    </div>
+
+                    <button class="btn btn-block btn-primary">
+                        Login
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="~/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="~/lib/popper.js/umd/popper.js"></script>
+    <script src="~/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/js/main.js"></script>
+</body>
+</html>

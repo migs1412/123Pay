@@ -1,0 +1,131 @@
+﻿@inject UserManager<AppUser> userManager
+@{
+    Layout = null;
+}
+
+<a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+   aria-expanded="false">
+    <div class="media align-items-center">
+        <span class="avatar-initials avatar avatar-sm rounded-circle" width="70" height="70" data-name="@userManager.GetUserAsync(User).Result.FirstName"></span>
+        <div class="media-body  ml-2  d-none d-lg-block">
+            <span class="mb-0 text-sm  font-weight-bold">@userManager.GetUserAsync(User).Result.FirstName</span>
+        </div>
+    </div>
+</a>
+<div class="dropdown-menu  dropdown-menu-right ">
+    <div class="dropdown-header noti-title">
+        <h6 class="text-overflow m-0">Welcome!</h6>
+    </div>
+    <form method="get" asp-controller="account" asp-action="changepassword">
+        <button class="dropdown-item">
+            <i class="fa fa-user"></i>
+            <span>Change Password</span>
+        </button>
+    </form>
+
+    <div class="dropdown-divider"></div>
+    <form method="post" asp-controller="account" asp-action="logout">
+        <button type="submit" class="dropdown-item">
+            <i class="fa fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </button>
+    </form>
+
+</div>
+
+<div class="modal fade" id="changePassModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-scrollable">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h3 class="modal-title">Change Password</h3>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form method="post" id="ChangePasswordForm">
+                    @*@await Html.PartialAsync("ChangePasswordPartial")*@
+                </form>
+            </div>
+            <!-- Modal footer -->
+            <div class="modal-footer text-right">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                <button form="ChangePasswordForm" type="submit" class="btn btn-primary">Sumbit</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+}
+
+@section Scripts
+{
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+
+         $('#ChangePassModal').on('show.bs.modal', function (event) {
+            var form = $('#ChangePasswordForm');
+            var button = $(event.relatedTarget);
+            var url = button.data('url');
+            var type = button.data('type');
+            form.attr('action', url);
+            $.get(url, function (data) {
+                form.html(data);
+            }).then(function () {
+                form.removeData('validator');
+                form.removeData('unobtrusiveValidation');
+                $.validator.unobtrusive.parse(form);
+            });
+         });
+
+        $('#ChangePasswordForm').on('submit', function (e) {
+            e.preventDefault();
+            var form = $('#ChangePasswordForm');
+            var button = $(event.relatedTarget);
+            var type = button.data('type');
+            console.log('submit change pass');
+            $.ajax({
+                type: $('#ChangePasswordForm').attr('method'),
+                url: @Url.Action("ChangePasswordPartial", "Account"),
+                data: $('#ChangePasswordForm').serialize(),
+                success: function (data) {
+                        Toast("Success", "Password updated!");
+                    $('#ChangePassModal').modal('toggle');
+                },
+                error: function (xhr, status, error) {
+                    Toast(status, error);
+                }
+            });
+        });
+
+        $('#ChangePassModal').on('hidden.bs.modal', function (event) {
+            $('#ChangePasswordForm').html('');
+        });
+
+        function Toast(title, message) {
+            var element = '<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="min-width: 200px; min-height: 100px;">' +
+                    '<div class="toast-header">' +
+                    '        <strong class="mr-auto">'+title+'</strong>' +
+                    '        <small class="text-muted">just now</small>' +
+                    '        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">' +
+                    '            <span aria-hidden="true">&times;</span>' +
+                    '        </button>' +
+                    '</div>' +
+                    '    <div class="toast-body">'+message+'</div>' +
+                    '</div>';
+            $('#toast-area').append(element);
+            $('.toast').toast({ delay: 5000 });
+            $('.toast').toast('show');
+            $('.toast').on('hidden.bs.toast', function () {
+                $(this).toast('dispose');
+                $(this).remove();
+            });
+        }
+    </script>
+}

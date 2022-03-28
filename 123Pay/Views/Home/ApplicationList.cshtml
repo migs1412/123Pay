@@ -1,0 +1,140 @@
+﻿@model PagedResult<ApplicationListModel>
+@{
+    Layout = null;
+}
+<div class="container-fluid" id="TableRecord">
+    <div class="table-responsive">
+        <table class="table align-items-center table-hover">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">
+                        <a class="btn btn-link sort-link"
+                           asp-action="Index"
+                           asp-route-pageSize="@Model.PageSize"
+                           asp-route-pageNumber="@Model.PageNumber"
+                           asp-route-sortOrder="@ViewBag.DateSortParm">Date</a>
+                    </th>
+                    <th scope="col">
+                        Client
+                    </th>
+                    <th scope="col">
+                        <a class="btn btn-link sort-link"
+                           asp-action="Index"
+                           asp-route-pageSize="@Model.PageSize"
+                           asp-route-pageNumber="@Model.PageNumber"
+                           asp-route-sortOrder="@ViewBag.CustomerSortParm">Customer</a>
+                    </th>
+                    <th scope="col">Merchant</th>
+                    <th scope="col">
+                        <a class="btn btn-link sort-link"
+                           asp-action="Index"
+                           asp-route-pageSize="@Model.PageSize"
+                           asp-route-pageNumber="@Model.PageNumber"
+                           asp-route-sortOrder="@ViewBag.AccountNoSortParm">Account Number</a>
+                    </th>
+                    <th scope="col">Account Name</th>
+                    <th scope="col">Other Details</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">
+                        <a class="btn btn-link sort-link"
+                           asp-action="Index"
+                           asp-route-pageSize="@Model.PageSize"
+                           asp-route-pageNumber="@Model.PageNumber"
+                           asp-route-sortOrder="@ViewBag.ProcessedBySortParm">Processed By</a>
+                    </th>
+                    <th scope="col">Service Fee</th>
+                    <th scope="col">Remarks</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Data.Any())
+                {
+                    @foreach (var client in Model.Data)
+                    {
+                <tr>
+                    <td>@client.ProcessedDate</td>
+                    <td>@client.Client</td>
+                    <td>@client.CustomerName</td>
+                    <td>@client.Merchant</td>
+                    <td>@client.AccountNumber</td>
+                    <td>@client.AccountName</td>
+                    <td>@client.OtherDetails</td>
+                    <td>@client.Amount</td>
+                    <td>@client.Status</td>
+                    <td>@client.ProcessedBy</td>
+                    <td>@client.ServiceFee</td>
+                    <td>@client.Remarks</td>
+                    @if (client.Status == "Pending")
+                    {
+                        <td scope="row">
+                            <button class="btn btn-link btn-sm mr-1"
+                                    onclick="processingStatus('@client.Id')">
+                                <span class="text-middle">Process</span>
+                            </button>
+
+                        </td>
+                    }
+                    else if (client.Status == "Processing")
+                    {
+                        <td scope="row">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <button class="btn btn-link btn-sm mr-1"
+                                            onclick="getId('@client.Id','Done')">
+                                        <span class="text-middle">Done</span>
+                                    </button>
+
+                                </div>
+                                <div class="col-lg-6">
+                                    <button class="btn btn-link btn-sm mr-1"
+                                            onclick="getId('@client.Id','Failed')">
+                                        <span class="text-middle">Failed</span>
+                                    </button>
+
+                                </div>
+                            </div>
+                        </td>
+                    }
+                    else
+                    {
+                        <td scope="row">
+                            <a class="btn btn-link btn-sm mr-1"
+                               href="@("../uploads/PaymentReceipts/" + client.Attachment)" target="_blank">
+                                <span class="text-middle"><i class="fa fa-paperclip" aria-hidden="true"></i></span>
+                            </a>
+
+                        </td>
+                    }
+
+                </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <th scope="row">No records found!</th>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex align-content-center justify-content-center pt-3">
+        <cs-pager cs-paging-pagenumber=(int)Model.PageNumber
+                  cs-paging-totalitems=(int)Model.TotalItems
+                  cs-paging-pagesize=(int)Model.PageSize
+                  cs-pagenumber-param="pagenumber"
+                  asp-route-filter="@ViewBag.Filter"
+                  asp-route-team="@ViewBag.Team"
+                  asp-controller="Home"
+                  asp-action="Index"
+                  asp-route-pagesize="@Model.PageSize"
+                  cs-pager-li-current-class="page-item active"
+                  cs-pager-li-other-class="page-item"
+                  cs-pager-li-non-active-class="page-item disabled"
+                  cs-pager-link-current-class="page-link"
+                  cs-pager-link-other-class="page-link"></cs-pager>
+    </div>
+</div>
